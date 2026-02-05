@@ -3,7 +3,7 @@ HOSTTYPE := $(shell uname -m)_$(shell uname -s)
 endif
 
 NAME = libft_malloc_$HOSTTYPE.so
-SOURCES = test.c
+SOURCES = malloc.c
 
 CC = cc
 CFLAGS = -Wall -Werror -Wextra -g

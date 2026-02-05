@@ -11,28 +11,46 @@
 # include <strings.h>
 
 # include <stddef.h>
+# include <stdbool.h>
 # include <stdalign.h>
 # include <sys/mman.h>
 # include <sys/resource.h>
 # include <bits/mman-linux.h>
 
-typedef struct chuckzone_lst
+# define PAGE_SIZE sysconf(_SC_PAGESIZE)
+# define N_TINY (size_t)(PAGE_SIZE * 16)    // max TINY-block size = 16KB
+# define M_SMALL (size_t)(PAGE_SIZE * 256)  // max SMALL-block size = 1MB
+# define TINY_ZONE (size_t)((N_TINY + sizeof(block)) * 100)   // TINY-zone size = 6400KB
+# define SMALL_ZONE (size_t)((M_SMALL + sizeof(block)) * 100) // SMALL-zone size = 100MB
+
+typedef struct blockdata
 {
-    long        size;
-    chunk_lst_t *prev;
-    chunk_lst_t *next;
-}   __attribute__((aligned(16)))    chunk_lst_t;
+    size_t  size;
+    bool    free;
+    void    *mem;
+    struct blockdata    *next;
+}   __attribute__((aligned(16)))    block;
 
-
-typedef struct metainfo_lst
+typedef struct zonedata
 {
-    long alloc_size;
-    chunk_lst_t *mini_head;
-    chunk_lst_t *small_head;
-}   info_lst_t;
+    size_t  size;
+    void    *beg;
+    block   **lst;
+    struct zonedata     *next;
+}   zone;
 
-void    ft_free(void *ptr);
-void    *ft_malloc(size_t size);
-void    *ft_realloc(void *ptr, size_t size);
+typedef struct metadata
+{
+    zone    *tiny;
+    zone    *small;
+    zone    *large;
+}   meta;
+
+extern meta info;
+
+
+void    free(void *ptr);
+void    *malloc(size_t size);
+void    *realloc(void *ptr, size_t size);
 
 #endif
