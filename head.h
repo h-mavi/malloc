@@ -9,6 +9,7 @@
 # include <string.h>
 # include <pthread.h>
 # include <strings.h>
+# include "libft/libft.h"
 
 # include <stddef.h>
 # include <stdbool.h>
@@ -20,8 +21,8 @@
 # define PAGE_SIZE sysconf(_SC_PAGESIZE)
 # define N_TINY (size_t)(PAGE_SIZE * 16)    // max TINY-block size = 16KB
 # define M_SMALL (size_t)(PAGE_SIZE * 256)  // max SMALL-block size = 1MB
-# define TINY_ZONE (size_t)((N_TINY + sizeof(block)) * 100)   // TINY-zone size = 6400KB
-# define SMALL_ZONE (size_t)((M_SMALL + sizeof(block)) * 100) // SMALL-zone size = 100MB
+# define TINY_ZONE (size_t)((N_TINY + sizeof(struct blockdata)) * 100)   // TINY-zone size = 6400KB
+# define SMALL_ZONE (size_t)((M_SMALL + sizeof(struct blockdata)) * 100) // SMALL-zone size = 100MB
 
 typedef struct blockdata
 {
@@ -35,7 +36,7 @@ typedef struct zonedata
 {
     size_t  size;
     void    *beg;
-    block   **lst;
+    block   *lst;
     struct zonedata     *next;
 }   zone;
 
