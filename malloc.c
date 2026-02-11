@@ -8,7 +8,7 @@ void    *ft_malloc(size_t size)
     if (size <= N_TINY)
     {
         if (!info.tiny)     { info.tiny = InitializeZone(TINY_ZONE); }
-
+        CheckNext();
         if (!info.tiny->lst)
         {
             info.tiny->lst = AddBlock(size, info.tiny);
@@ -19,7 +19,7 @@ void    *ft_malloc(size_t size)
     else if (size <= M_SMALL)
     {
         if (!info.small)    { info.small = InitializeZone(SMALL_ZONE); }
-
+        CheckNext();
         if (!info.small->lst)
         {
             info.small->lst = AddBlock(size, info.small);
@@ -34,7 +34,7 @@ void    *ft_malloc(size_t size)
 
 void    ft_free(void *ptr)
 {
-    zone    *zone = info.tiny;
+    zone    *zone = FindFirstZone();
     block   *chunk;
 
     if (!ptr) { return ; }
@@ -59,7 +59,7 @@ void    ft_free(void *ptr)
 void    show_alloc_mem()
 {
     block   *chunk;
-    zone    *zone = info.tiny;
+    zone    *zone = FindFirstZone();
     long     r_size, tot = 0, r_tot = 0;
 
     if (DEBUG) { ft_printf("[ DEBUG MODE : %sON%s ]\n", B_GREEN, RESET); }

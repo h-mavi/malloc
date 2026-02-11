@@ -8,6 +8,7 @@ zone    *InitializeZone(size_t size)
     VALGRIND_MALLOCLIKE_BLOCK(zone, full_size, 0, 0);
 
     zone->lst = NULL;
+    zone->next = NULL;
     zone->size = full_size;
     zone->beg = (void*)zone + sizeof(struct zonedata);
 
@@ -47,8 +48,10 @@ void *AddLargeBlock(size_t size)
         if (info.large == MAP_FAILED) { return (NULL); }
         VALGRIND_MALLOCLIKE_BLOCK(info.large, sizeof(struct zonedata) + sizeof(struct blockdata) + size, 0, 0);
 
-        info.large->size = sizeof(struct zonedata) + sizeof(struct blockdata) + size;
+        info.large->lst = NULL;
+        info.large->next = NULL;
         info.large->beg = (void *)info.large + sizeof(struct zonedata);
+        info.large->size = sizeof(struct zonedata) + sizeof(struct blockdata) + size;
         info.large->lst = AddBlock(size, info.large);
         CheckNext();
         return ((void *)info.large->lst->mem);
@@ -60,6 +63,7 @@ void *AddLargeBlock(size_t size)
     if (chunk == MAP_FAILED) { return (NULL); }
     VALGRIND_MALLOCLIKE_BLOCK(chunk, sizeof(struct blockdata) + size, 0, 0);
 
+    chunk->next = NULL;
     chunk->free = false;
     chunk->size = size + sizeof(struct blockdata);
     chunk->mem = (void*)chunk + sizeof(struct blockdata);
@@ -67,7 +71,7 @@ void *AddLargeBlock(size_t size)
 	while (ex->next)
 		ex = ex->next;
 	ex->next = chunk;
-    chunk->next = NULL;
+    // chunk->next = NULL;
     return ((void *)chunk->mem);
 }
 
@@ -108,4 +112,12 @@ void    *FindFreeBlock(size_t size, zone *zone)
     if (zone == info.large) { return (NULL); }
     pres->next = AddBlock(size, zone);
     return ((void *)pres->next->mem);
+}
+
+zone *FindFirstZone()
+{
+    if (info.tiny)       { return (info.tiny); }
+    else if (info.small) { return (info.small); }
+    else if (info.large) { return (info.large); }
+    return (NULL);
 }

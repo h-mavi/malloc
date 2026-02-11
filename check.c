@@ -2,26 +2,23 @@
 
 void    CheckNext()
 {
-    zone *zone;
     if (info.tiny)
     {
-        zone = info.tiny;
-        if (!info.small && !info.large && zone->next != NULL)           { zone->next = NULL; }
-        else if (!info.small && info.large && zone->next != info.large) { zone->next = info.large; }
-        else if (info.small && zone->next != info.small)                { zone->next = info.small; }
+        if (!info.small && !info.large && info.tiny->next)      { info.tiny->next = NULL; }
+        else if (info.large && info.tiny->next != info.large)   { info.tiny->next = info.large; }
+        else if (info.small && info.tiny->next != info.small)   { info.tiny->next = info.small; }
     }
     if (info.small)
     {
-        zone = info.small;
-        if (!info.large && zone->next != NULL)    { zone->next = NULL; }
-        else if (zone->next != info.large)        { zone->next = info.large; }
+        if (!info.large && info.small->next)        { info.small->next = NULL; }
+        else if (info.small->next != info.large)    { info.small->next = info.large; }
     }
-    if (info.large && info.large->next != NULL) { info.large->next = NULL; }
+    if (info.large && info.large->next) { info.large->next = NULL; }
 }
 
 void    CheckForCoalesce()
 {
-    zone    *zone = info.tiny;
+    zone    *zone = FindFirstZone();
     block   *chunk, *next;
 
     while (zone && zone != info.large)
@@ -32,9 +29,9 @@ void    CheckForCoalesce()
             if (chunk->next && chunk->free == true && chunk->next->free == true)
             {
                 next = chunk->next;
-                chunk->size += next->size;
                 chunk->free = true;
                 chunk->next = next->next;
+                chunk->size += next->size;
             }
             chunk = chunk->next;
         }
@@ -60,7 +57,6 @@ void    CheckForTotalFree()
         info.small = NULL;
         CheckNext();
     }
-
     if (info.large)
     {
         chunk = info.large->lst;

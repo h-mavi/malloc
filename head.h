@@ -67,6 +67,7 @@ zone    *InitializeZone(size_t size);
 void    *AddLargeBlock(size_t size);
 block   *AddBlock(size_t size, const zone *zone);
 void    *FindFreeBlock(size_t size, zone *zone);
+zone    *FindFirstZone();
 
 // in malloc.c
 void    *malloc(size_t size);
