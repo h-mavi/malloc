@@ -2,8 +2,8 @@ ifeq ($(HOSTTYPE),)
 HOSTTYPE := $(shell uname -m)_$(shell uname -s)
 endif
 
-NAME = libft_malloc_$HOSTTYPE.so
-SOURCES = malloc.c
+NAME = libft_malloc_$(HOSTTYPE).so
+SOURCES = malloc.c utils.c check.c
 
 CC = cc
 CFLAGS = -Wall -Werror -Wextra -g
@@ -11,12 +11,15 @@ CFLAGS = -Wall -Werror -Wextra -g
 OBJ_DIR = obj
 OBJECTS = $(patsubst %.c,$(OBJ_DIR)/%.o,$(SOURCES))
 
+all : $(NAME)
+
 $(OBJ_DIR)/%.o: %.c
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 LIBFT = libft/libft.a
-LIBFT_DIR = libft/
+PRINTF = libft/printf/libftprintf.a
+LIBFT_DIR = libft/printf/
 
 $(LIBFT):
 	@$(MAKE) -C $(LIBFT_DIR)
@@ -24,11 +27,12 @@ $(LIBFT):
 $(NAME) : $(OBJECTS) $(LIBFT)
 	@echo "Compiling $(NAME)"
 	cp $(LIBFT) $(NAME)
+	cp $(PRINTF) $(NAME)
 	ar -rcs $(NAME) $(OBJECTS)
 	ln -s $(NAME) libft_malloc.so
 
 test : $(OBJECTS) $(LIBFT)
-	$(CC) $(OBJECTS) $(LIBFT) $(CFLAGS)
+	$(CC) $(OBJECTS) $(LIBFT) $(PRINTF) $(CFLAGS) -o test
 	
 clean:
 	@rm -f $(OBJECTS)
@@ -36,10 +40,10 @@ clean:
 
 fclean: clean
 	@rm -f $(NAME)
-	@rm -f a.out
+	@rm -f test
+	@rm -f libft_malloc.so
 	$(MAKE) fclean -C $(LIBFT_DIR)
 
-all : $(NAME)
 re : fclean all
 
 .PHONY: all test clean fclean re

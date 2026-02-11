@@ -1,15 +1,8 @@
 # ifndef HEAD_H
 # define HEAD_H
 
-# include <stdio.h>
-# include <limits.h>
-# include <stdint.h>
-# include <unistd.h>
-# include <stdlib.h>
-# include <string.h>
-# include <pthread.h>
-# include <strings.h>
 # include "libft/libft.h"
+# include "libft/printf/ft_printf.h"
 
 # include <stddef.h>
 # include <stdbool.h>
@@ -17,6 +10,20 @@
 # include <sys/mman.h>
 # include <sys/resource.h>
 # include <bits/mman-linux.h>
+
+# include <valgrind/memcheck.h>
+
+# define RESET "\033[0m"
+# define RED "\033[0;31m"
+# define BLUE "\033[0;34m"
+# define GREEN "\033[0;32m"
+# define YELLOW "\033[0;33m"
+# define B_RED "\033[1;31m"
+# define B_BLUE "\033[1;34m"
+# define B_GREEN "\033[1;32m"
+# define B_YELLOW "\033[1;33m"
+
+# define DEBUG 1
 
 # define PAGE_SIZE sysconf(_SC_PAGESIZE)
 # define N_TINY (size_t)(PAGE_SIZE * 16)    // max TINY-block size = 16KB
@@ -49,9 +56,22 @@ typedef struct metadata
 
 extern meta info;
 
+// in check.c
+void    CheckNext();
+void    CheckForCoalesce();
+void    CheckForTotalFree();
 
-void    free(void *ptr);
+
+// in utils.c
+zone    *InitializeZone(size_t size);
+void    *AddLargeBlock(size_t size);
+block   *AddBlock(size_t size, const zone *zone);
+void    *FindFreeBlock(size_t size, zone *zone);
+
+// in malloc.c
 void    *malloc(size_t size);
+void    free(void *ptr);
+void    show_alloc_mem();
 void    *realloc(void *ptr, size_t size);
 
 #endif
