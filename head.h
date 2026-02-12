@@ -68,11 +68,13 @@ void    *AddLargeBlock(size_t size);
 block   *AddBlock(size_t size, const zone *zone);
 void    *FindFreeBlock(size_t size, zone *zone);
 zone    *FindFirstZone();
+block   *FindBlock(void *ptr);
+zone    *FindZone(size_t size);
 
 // in malloc.c
-void    *malloc(size_t size);
-void    free(void *ptr);
+void    *ft_malloc(size_t size);
+void    ft_free(void *ptr);
 void    show_alloc_mem();
-void    *realloc(void *ptr, size_t size);
+void    *ft_realloc(void *ptr, size_t size);
 
 #endif

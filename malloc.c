@@ -2,12 +2,36 @@
 
 meta info = {NULL, NULL, NULL};
 
+// void    *ft_malloc(size_t size)
+// {
+//     zone *zone = NULL;
+//     size_t size_zone;
+
+//     if (size <= N_TINY)         { zone = info.tiny; size_zone = TINY_ZONE; }
+//     else if (size <= M_SMALL)   { zone = info.small; size_zone = SMALL_ZONE; }
+//     else { return (AddLargeBlock(size)); }
+
+//     if (!size)  { size = 16; }
+//     if (!zone)  { zone = InitializeZone(size_zone); }
+//     if (!zone)  { return (NULL); }
+//     CheckNext();
+//     if (!zone->lst)
+//     {
+//         zone->lst = AddBlock(size, zone);
+//         return ((void *)zone->lst->mem);
+//     }
+//     else { return (FindFreeBlock(size, zone)); }
+
+//     return (NULL);
+// }
+
 void    *ft_malloc(size_t size)
 {
-    if (!size) { return (NULL); }
+    if (!size) { size = 16; }
     if (size <= N_TINY)
     {
         if (!info.tiny)     { info.tiny = InitializeZone(TINY_ZONE); }
+        if (!info.tiny)     { return (NULL); }
         CheckNext();
         if (!info.tiny->lst)
         {
@@ -19,6 +43,7 @@ void    *ft_malloc(size_t size)
     else if (size <= M_SMALL)
     {
         if (!info.small)    { info.small = InitializeZone(SMALL_ZONE); }
+        if (!info.small)     { return (NULL); }
         CheckNext();
         if (!info.small->lst)
         {
@@ -34,27 +59,40 @@ void    *ft_malloc(size_t size)
 
 void    ft_free(void *ptr)
 {
-    zone    *zone = FindFirstZone();
-    block   *chunk;
+    block   *chunk = FindBlock(ptr);
 
-    if (!ptr) { return ; }
-    while (zone)
-    {
-        chunk = zone->lst;
-        while(chunk)
-        {
-            if (chunk->mem == ptr)
-                break;
-            chunk = chunk->next;
-        }
-        zone = zone->next;
-    }
-    if (!chunk)
-        { printf("Free faild\n"); return ; }
+    if (!chunk) { return ; }
     chunk->free = true;
     CheckForCoalesce();
     CheckForTotalFree();
 }
+
+void    *ft_realloc(void *ptr, size_t size)
+{
+    block   *new = NULL, *chunk = FindBlock(ptr);
+    if (!ptr)           { return (ft_malloc(size)); }
+    if (ptr && !size)   { ft_free(ptr); return (NULL); }
+    if (!chunk) { return (NULL); }
+
+    if (size + sizeof(struct blockdata) == chunk->size) { return ((void *)chunk->mem); }
+    else if (!chunk->next || size + sizeof(struct blockdata) < chunk->size)
+        chunk->size = size + sizeof(struct blockdata);
+    
+    if (chunk->next && chunk->mem + size > (void *)chunk->next)
+    {
+        chunk->free = true;
+        CheckForCoalesce();
+        if (size <= N_TINY)         { new = FindBlock(FindFreeBlock(size, info.tiny)); }
+        else if (size <= M_SMALL)   { new = FindBlock(FindFreeBlock(size, info.small)); }
+        else { new = FindBlock(FindFreeBlock(size, info.large)); }
+        ft_memcpy(new->mem, chunk->mem, chunk->size - sizeof(struct blockdata));
+        return ((void *)new->mem);
+    }
+
+    return ((void *)chunk->mem);
+}
+
+//attributes malloc(0) realloc(0)
 
 void    show_alloc_mem()
 {
@@ -95,74 +133,3 @@ void    show_alloc_mem()
     if (DEBUG) { ft_printf("~   %sREAL%s Total : %d bytes\n", B_GREEN, RESET, r_tot); } 
 }
 
-int main(void)
-{
-    int *i = ft_malloc(sizeof(int));
-    if (!i) { printf("malloc fallita\n"); return (1); }
-    *i = 23;
-
-    int *j = ft_malloc(sizeof(int));
-    *j = 12;
-
-    char *s = ft_malloc(sizeof(char) * 58);
-    ft_strlcpy(s, "test test, prova prova!! Il dottor Thomas non e' in sede!", 58);
-
-    show_alloc_mem();
-
-    ft_free(j);
-    ft_free(i);
-    ft_free(s);
-    ft_printf("\n");
-    show_alloc_mem();
-
-    int *a = ft_malloc(sizeof(int));
-    *a = 'a';
-
-    char *b = ft_malloc(sizeof(char) * 28);
-    ft_strlcpy(b, "abcdefghilmnopqrstuvwykjxz", 28);
-
-    int *x = ft_malloc(sizeof(int));
-    *x = 90;
-
-    ft_printf("\n");
-    show_alloc_mem();
-
-    char *c = ft_malloc(sizeof(char) * 34);
-    ft_strlcpy(c, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", 34);
-
-    ft_printf("\n");
-    show_alloc_mem();
-
-    ft_printf("\n[ AddLargeBlock tests ]\n");
-    size_t big1 = M_SMALL + 128;
-    size_t big2 = M_SMALL + 4096;
-    char *l1 = ft_malloc(big1);
-    char *l2 = ft_malloc(big2);
-    if (!l1 || !l2)
-        printf("large allocation failed\n");
-    else
-    {
-        ft_bzero(l1, big1);
-        ft_bzero(l2, big2);
-        l1[0] = 'L';
-        l2[0] = 'R';
-    }
-
-    ft_printf("\n");
-    show_alloc_mem();
-
-    ft_free(l2);
-
-    ft_printf("\n");
-    show_alloc_mem();
-
-    ft_free(l1);
-
-    ft_printf("\n");
-    show_alloc_mem();
-
-    ft_free(a);
-    ft_free(b);
-    ft_free(x);
-    ft_free(c);
-}

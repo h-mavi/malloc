@@ -71,7 +71,6 @@ void *AddLargeBlock(size_t size)
 	while (ex->next)
 		ex = ex->next;
 	ex->next = chunk;
-    // chunk->next = NULL;
     return ((void *)chunk->mem);
 }
 
@@ -119,5 +118,25 @@ zone *FindFirstZone()
     if (info.tiny)       { return (info.tiny); }
     else if (info.small) { return (info.small); }
     else if (info.large) { return (info.large); }
+    return (NULL);
+}
+
+block *FindBlock(void *ptr)
+{
+    zone    *zone = FindFirstZone();
+    block   *chunk = NULL;
+
+    if (!ptr) { return (NULL); }
+    while (zone)
+    {
+        chunk = zone->lst;
+        while(chunk)
+        {
+            if (chunk->mem == ptr)
+                return (chunk);
+            chunk = chunk->next;
+        }
+        zone = zone->next;
+    }
     return (NULL);
 }

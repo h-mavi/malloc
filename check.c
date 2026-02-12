@@ -32,6 +32,7 @@ void    CheckForCoalesce()
                 chunk->free = true;
                 chunk->next = next->next;
                 chunk->size += next->size;
+                continue;
             }
             chunk = chunk->next;
         }
