@@ -4,14 +4,14 @@ void    CheckNext()
 {
     if (info.tiny)
     {
-        if (!info.small && !info.large && info.tiny->next)      { info.tiny->next = NULL; }
-        else if (info.large && info.tiny->next != info.large)   { info.tiny->next = info.large; }
-        else if (info.small && info.tiny->next != info.small)   { info.tiny->next = info.small; }
+        if (info.small)            { info.tiny->next = info.small; }
+        else if (info.large)       { info.tiny->next = info.large; }
+        else                       { info.tiny->next = NULL; }
     }
     if (info.small)
     {
-        if (!info.large && info.small->next)        { info.small->next = NULL; }
-        else if (info.small->next != info.large)    { info.small->next = info.large; }
+        if (info.large)             { info.small->next = info.large; }
+        else                        { info.small->next = NULL; }
     }
     if (info.large && info.large->next) { info.large->next = NULL; }
 }
@@ -44,14 +44,15 @@ void    CheckForTotalFree()
 {
     block   *chunk, *mid, *prev = NULL;
 
-    if (info.tiny && info.tiny->lst->next == NULL && info.tiny->lst->free)
+    CheckForCoalesce();
+    if (info.tiny && (!info.tiny->lst || (info.tiny->lst->next == NULL && info.tiny->lst->free)))
     {
         munmap((void *)info.tiny, info.tiny->size);
         VALGRIND_FREELIKE_BLOCK(info.tiny, 0);
         info.tiny = NULL;
         CheckNext();
     }
-    if (info.small && info.small->lst->next == NULL && info.small->lst->free)
+    if (info.small && (!info.small->lst || (info.small->lst->next == NULL && info.small->lst->free)))
     {
         munmap((void *)info.small, info.small->size);
         VALGRIND_FREELIKE_BLOCK(info.small, 0);
@@ -69,7 +70,7 @@ void    CheckForTotalFree()
             {
                 munmap((void *)mid, mid->size);
                 VALGRIND_FREELIKE_BLOCK(mid, 0);
-                prev->next = chunk;
+                if (prev) { prev->next = chunk; continue; }
             }
             prev = mid;
         }
@@ -81,5 +82,6 @@ void    CheckForTotalFree()
             CheckNext();
         }
     }
+    if (info.tiny || info.small || info.large) { ft_putstr_fd("\033[1;31mERROR LEAKS\n\033[0m", 2); }
 
 }

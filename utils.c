@@ -1,18 +1,22 @@
 # include "head.h"
 
-zone    *InitializeZone(size_t size)
+void    InitializeZone()
 {
-    size_t full_size = sizeof(struct zonedata) + size;
-    zone *zone = mmap(NULL, full_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
-    if (zone == MAP_FAILED) { return (NULL); }
-    VALGRIND_MALLOCLIKE_BLOCK(zone, full_size, 0, 0);
+    info.small = mmap(NULL, sizeof(struct zonedata) + SMALL_ZONE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
+    if (info.small == MAP_FAILED) { ft_putstr_fd("\033[1;31mERROR ALLOCATION FAILED\n\033[0m", 2); }
+    VALGRIND_MALLOCLIKE_BLOCK(info.small, sizeof(struct zonedata) + SMALL_ZONE, 0, 0);
+    info.small->lst = NULL;
+    info.small->next = NULL;
+    info.small->size = sizeof(struct zonedata) + SMALL_ZONE;
+    info.small->beg = (void*)info.small + sizeof(struct zonedata);
 
-    zone->lst = NULL;
-    zone->next = NULL;
-    zone->size = full_size;
-    zone->beg = (void*)zone + sizeof(struct zonedata);
-
-    return (zone);
+    info.tiny = mmap(NULL, sizeof(struct zonedata) + TINY_ZONE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
+    if (info.tiny == MAP_FAILED) { ft_putstr_fd("\033[1;31mERROR ALLOCATION FAILED\n\033[0m", 2); }
+    VALGRIND_MALLOCLIKE_BLOCK(info.tiny, sizeof(struct zonedata) + TINY_ZONE, 0, 0);
+    info.tiny->lst = NULL;
+    info.tiny->next = info.small;
+    info.tiny->size = sizeof(struct zonedata) + TINY_ZONE;
+    info.tiny->beg = (void*)info.tiny + sizeof(struct zonedata);
 }
 
 block   *AddBlock(size_t size, const zone *zone)
@@ -101,7 +105,7 @@ void    *FindFreeBlock(size_t size, zone *zone)
             pres->free = false;
             return ((void *)pres->mem);
         }
-        else if (pres->size > size + sizeof(struct blockdata) && pres->free && \
+        else if (zone != info.large && pres->size > size + sizeof(struct blockdata) && pres->free && \
             pres->size - size - sizeof(struct blockdata) > sizeof(struct blockdata))
             return ((void *)SplitBlock(pres, size)->mem);
 

@@ -2,58 +2,23 @@
 
 meta info = {NULL, NULL, NULL};
 
-// void    *ft_malloc(size_t size)
-// {
-//     zone *zone = NULL;
-//     size_t size_zone;
-
-//     if (size <= N_TINY)         { zone = info.tiny; size_zone = TINY_ZONE; }
-//     else if (size <= M_SMALL)   { zone = info.small; size_zone = SMALL_ZONE; }
-//     else { return (AddLargeBlock(size)); }
-
-//     if (!size)  { size = 16; }
-//     if (!zone)  { zone = InitializeZone(size_zone); }
-//     if (!zone)  { return (NULL); }
-//     CheckNext();
-//     if (!zone->lst)
-//     {
-//         zone->lst = AddBlock(size, zone);
-//         return ((void *)zone->lst->mem);
-//     }
-//     else { return (FindFreeBlock(size, zone)); }
-
-//     return (NULL);
-// }
-
 void    *ft_malloc(size_t size)
 {
-    if (!size) { size = 16; }
-    if (size <= N_TINY)
+    zone **zone = NULL;
+    size_t size_zone;
+
+    if (!size)                  { size = 16; }
+    if (size <= N_TINY)         { zone = &info.tiny; size_zone = TINY_ZONE; }
+    else if (size <= M_SMALL)   { zone = &info.small; size_zone = SMALL_ZONE; }
+    else { return (AddLargeBlock(size)); }
+
+    if (!(*zone)->lst)
     {
-        if (!info.tiny)     { info.tiny = InitializeZone(TINY_ZONE); }
-        if (!info.tiny)     { return (NULL); }
-        CheckNext();
-        if (!info.tiny->lst)
-        {
-            info.tiny->lst = AddBlock(size, info.tiny);
-            return ((void *)info.tiny->lst->mem);
-        }
-        else { return (FindFreeBlock(size, info.tiny)); }
+        (*zone)->lst = AddBlock(size, *zone);
+        return ((void *)(*zone)->lst->mem);
     }
-    else if (size <= M_SMALL)
-    {
-        if (!info.small)    { info.small = InitializeZone(SMALL_ZONE); }
-        if (!info.small)     { return (NULL); }
-        CheckNext();
-        if (!info.small->lst)
-        {
-            info.small->lst = AddBlock(size, info.small);
-            return ((void *)info.small->lst->mem);
-        }
-        else { return (FindFreeBlock(size, info.small)); }
-    }
-    else
-        return (AddLargeBlock(size));
+    else { return (FindFreeBlock(size, *zone)); }
+
     return (NULL);
 }
 
@@ -64,7 +29,6 @@ void    ft_free(void *ptr)
     if (!chunk) { return ; }
     chunk->free = true;
     CheckForCoalesce();
-    CheckForTotalFree();
 }
 
 void    *ft_realloc(void *ptr, size_t size)

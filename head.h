@@ -59,11 +59,11 @@ extern meta info;
 // in check.c
 void    CheckNext();
 void    CheckForCoalesce();
-void    CheckForTotalFree();
+void    __attribute__((destructor)) CheckForTotalFree();
 
 
 // in utils.c
-zone    *InitializeZone(size_t size);
+void    __attribute__((constructor)) InitializeZone();
 void    *AddLargeBlock(size_t size);
 block   *AddBlock(size_t size, const zone *zone);
 void    *FindFreeBlock(size_t size, zone *zone);
