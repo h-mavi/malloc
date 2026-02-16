@@ -6,7 +6,7 @@
 /*   By: mfanelli <mfanelli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 13:36:11 by mfanelli          #+#    #+#             */
-/*   Updated: 2026/02/09 15:13:08 by mfanelli         ###   ########.fr       */
+/*   Updated: 2026/02/16 14:43:46 by mfanelli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 # define FT_PRINTF_H
 
 # include <stdio.h>
-# include <stdlib.h>
 # include <limits.h>
 # include <unistd.h>
 # include <limits.h>

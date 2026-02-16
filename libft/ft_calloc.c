@@ -6,11 +6,12 @@
 /*   By: mfanelli <mfanelli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/27 10:33:49 by mfanelli          #+#    #+#             */
-/*   Updated: 2026/01/13 08:59:26 by mfanelli         ###   ########.fr       */
+/*   Updated: 2026/02/16 14:43:58 by mfanelli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+#include <stdlib.h>
 
 void	*ft_calloc(size_t nmemb, size_t size)
 {

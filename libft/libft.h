@@ -6,7 +6,7 @@
 /*   By: mfanelli <mfanelli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 13:36:11 by mfanelli          #+#    #+#             */
-/*   Updated: 2026/01/05 15:45:17 by mfanelli         ###   ########.fr       */
+/*   Updated: 2026/02/16 14:43:50 by mfanelli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 # include <limits.h>
 # include <stdint.h>
 # include <unistd.h>
-# include <stdlib.h>
+// # include <stdlib.h>
 # include <string.h>
 # include <strings.h>
 

@@ -6,11 +6,12 @@
 /*   By: mfanelli <mfanelli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/27 15:13:51 by mfanelli          #+#    #+#             */
-/*   Updated: 2026/01/13 09:00:59 by mfanelli         ###   ########.fr       */
+/*   Updated: 2026/02/16 14:44:31 by mfanelli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+#include <stdlib.h>
 
 static int	len_arr_split(char const *arr, char c)
 {

@@ -6,11 +6,12 @@
 /*   By: mfanelli <mfanelli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/27 10:21:24 by mfanelli          #+#    #+#             */
-/*   Updated: 2026/01/04 14:21:04 by mfanelli         ###   ########.fr       */
+/*   Updated: 2026/02/16 14:44:05 by mfanelli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+#include <stdlib.h>
 
 static int	n_len(int n)
 {

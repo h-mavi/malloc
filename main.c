@@ -11,17 +11,17 @@ void print_test_header(const char *test_name)
 
 void test_basic_malloc()
 {
-    print_test_header("TEST 1: Basic ft_malloc()");
+    print_test_header("TEST 1: Basic malloc()");
     
-    int *i = ft_malloc(sizeof(int));
+    int *i = malloc(sizeof(int));
     if (!i) { printf("malloc failed\n"); return; }
     *i = 42;
     
-    char *str = ft_malloc(sizeof(char) * 50);
+    char *str = malloc(sizeof(char) * 50);
     if (!str) { printf("malloc failed\n"); return; }
     ft_strlcpy(str, "Hello from custom allocator!", 50);
     
-    double *d = ft_malloc(sizeof(double));
+    double *d = malloc(sizeof(double));
     if (!d) { printf("malloc failed\n"); return; }
     *d = 3.14159;
     
@@ -31,25 +31,25 @@ void test_basic_malloc()
     
     show_alloc_mem();
     
-    ft_free(i);
-    ft_free(str);
-    ft_free(d);
+    free(i);
+    free(str);
+    free(d);
 }
 
 void test_malloc_zero()
 {
-    print_test_header("TEST 2: ft_malloc(0)");
+    print_test_header("TEST 2: malloc(0)");
     
-    void *ptr = ft_malloc(0);
+    void *ptr = malloc(0);
     if (ptr) {
-        ft_printf("ft_malloc(0) returned non-NULL pointer: %p\n", ptr);
+        ft_printf("malloc(0) returned non-NULL pointer: %p\n", ptr);
     } else {
-        ft_printf("ft_malloc(0) returned NULL\n");
+        ft_printf("malloc(0) returned NULL\n");
     }
     
     show_alloc_mem();
     
-    if (ptr) ft_free(ptr);
+    if (ptr) free(ptr);
 }
 
 void test_multiple_allocations()
@@ -60,7 +60,7 @@ void test_multiple_allocations()
     int *array[NUM_ALLOCS];
     
     for (int i = 0; i < NUM_ALLOCS; i++) {
-        array[i] = ft_malloc(sizeof(int));
+        array[i] = malloc(sizeof(int));
         if (!array[i]) {
             ft_printf("Allocation %d failed\n", i);
             return;
@@ -77,7 +77,7 @@ void test_multiple_allocations()
     
     // Free every other allocation
     for (int i = 0; i < NUM_ALLOCS; i += 2) {
-        ft_free(array[i]);
+        free(array[i]);
     }
     
     ft_printf("\nAfter freeing even indices:\n");
@@ -85,15 +85,15 @@ void test_multiple_allocations()
     
     // Free the rest
     for (int i = 1; i < NUM_ALLOCS; i += 2) {
-        ft_free(array[i]);
+        free(array[i]);
     }
 }
 
 void test_realloc_basic()
 {
-    print_test_header("TEST 4: Basic ft_realloc()");
+    print_test_header("TEST 4: Basic realloc()");
     
-    char *str = ft_malloc(20);
+    char *str = malloc(20);
     if (!str) { printf("malloc failed\n"); return; }
     ft_strlcpy(str, "Short string", 20);
     
@@ -101,7 +101,7 @@ void test_realloc_basic()
     show_alloc_mem();
     
     // Expand
-    str = ft_realloc(str, 100);
+    str = realloc(str, 100);
     if (!str) { printf("realloc failed\n"); return; }
     ft_strlcpy(str, "This is a much longer string after realloc!", 100);
     
@@ -109,20 +109,20 @@ void test_realloc_basic()
     show_alloc_mem();
     
     // Shrink
-    str = ft_realloc(str, 30);
+    str = realloc(str, 30);
     ft_printf("\nAfter realloc (shrink): %s\n", str);
     show_alloc_mem();
     
-    ft_free(str);
+    free(str);
 }
 
 void test_realloc_edge_cases()
 {
-    print_test_header("TEST 5: ft_realloc() Edge Cases");
+    print_test_header("TEST 5: realloc() Edge Cases");
     
     // realloc with NULL pointer (should act like malloc)
-    ft_printf("Test: ft_realloc(NULL, 50)\n");
-    char *ptr1 = ft_realloc(NULL, 50);
+    ft_printf("Test: realloc(NULL, 50)\n");
+    char *ptr1 = realloc(NULL, 50);
     if (ptr1) {
         ft_strlcpy(ptr1, "Allocated via realloc(NULL)", 50);
         ft_printf("Result: %s\n", ptr1);
@@ -130,8 +130,8 @@ void test_realloc_edge_cases()
     show_alloc_mem();
     
     // realloc with size 0 (should act like free)
-    ft_printf("\nTest: ft_realloc(ptr, 0)\n");
-    char *ptr2 = ft_realloc(ptr1, 0);
+    ft_printf("\nTest: realloc(ptr, 0)\n");
+    char *ptr2 = realloc(ptr1, 0);
     ft_printf("Returned: %p (should be NULL)\n", ptr2);
     show_alloc_mem();
 }
@@ -144,7 +144,7 @@ void test_large_allocations()
     size_t large_size2 = M_SMALL + 8192;
     
     ft_printf("Allocating %zu bytes (LARGE zone)\n", large_size1);
-    char *large1 = ft_malloc(large_size1);
+    char *large1 = malloc(large_size1);
     if (!large1) {
         ft_printf("Large allocation 1 failed\n");
         return;
@@ -159,10 +159,10 @@ void test_large_allocations()
     large1[6] = '\0';
     
     ft_printf("Allocating %zu bytes (LARGE zone)\n", large_size2);
-    char *large2 = ft_malloc(large_size2);
+    char *large2 = malloc(large_size2);
     if (!large2) {
         ft_printf("Large allocation 2 failed\n");
-        ft_free(large1);
+        free(large1);
         return;
     }
     ft_bzero(large2, large_size2);
@@ -179,11 +179,11 @@ void test_large_allocations()
     
     show_alloc_mem();
     
-    ft_free(large1);
+    free(large1);
     ft_printf("\nAfter freeing large1:\n");
     show_alloc_mem();
     
-    ft_free(large2);
+    free(large2);
 }
 
 void test_tiny_small_large()
@@ -193,37 +193,37 @@ void test_tiny_small_large()
     // TINY allocation
     size_t tiny_size = 100;
     ft_printf("TINY allocation (%zu bytes):\n", tiny_size);
-    char *tiny = ft_malloc(tiny_size);
+    char *tiny = malloc(tiny_size);
     if (tiny) ft_strlcpy(tiny, "TINY", tiny_size);
     
     // SMALL allocation
     size_t small_size = N_TINY + 1024;
     ft_printf("SMALL allocation (%zu bytes):\n", small_size);
-    char *small = ft_malloc(small_size);
+    char *small = malloc(small_size);
     if (small) small[0] = 'S';
     
     // LARGE allocation
     size_t large_size = M_SMALL + 512;
     ft_printf("LARGE allocation (%zu bytes):\n", large_size);
-    char *large = ft_malloc(large_size);
+    char *large = malloc(large_size);
     if (large) large[0] = 'L';
     
     show_alloc_mem();
     
-    ft_free(tiny);
-    ft_free(small);
-    ft_free(large);
+    free(tiny);
+    free(small);
+    free(large);
 }
 
 void test_fragmentation()
 {
     print_test_header("TEST 8: Fragmentation and Coalescing");
     
-    int *a = ft_malloc(sizeof(int));
-    int *b = ft_malloc(sizeof(int));
-    int *c = ft_malloc(sizeof(int));
-    int *d = ft_malloc(sizeof(int));
-    int *e = ft_malloc(sizeof(int));
+    int *a = malloc(sizeof(int));
+    int *b = malloc(sizeof(int));
+    int *c = malloc(sizeof(int));
+    int *d = malloc(sizeof(int));
+    int *e = malloc(sizeof(int));
     
     if (!a || !b || !c || !d || !e) {
         ft_printf("Allocation failed\n");
@@ -236,27 +236,27 @@ void test_fragmentation()
     show_alloc_mem();
     
     // Free middle ones to create fragmentation
-    ft_free(b);
-    ft_free(d);
+    free(b);
+    free(d);
     
     ft_printf("\nAfter freeing b and d (fragmentation):\n");
     show_alloc_mem();
     
     // Free adjacent blocks to test coalescing
-    ft_free(c);
+    free(c);
     
     ft_printf("\nAfter freeing c (should coalesce with b and d):\n");
     show_alloc_mem();
     
-    ft_free(a);
-    ft_free(e);
+    free(a);
+    free(e);
 }
 
 void test_double_free()
 {
     print_test_header("TEST 9: Double Free Protection");
     
-    int *ptr = ft_malloc(sizeof(int));
+    int *ptr = malloc(sizeof(int));
     if (!ptr) {
         ft_printf("Allocation failed\n");
         return;
@@ -266,12 +266,12 @@ void test_double_free()
     ft_printf("Allocated pointer: %p\n", ptr);
     show_alloc_mem();
     
-    ft_free(ptr);
+    free(ptr);
     ft_printf("\nAfter first free:\n");
     show_alloc_mem();
     
     ft_printf("\nAttempting double free...\n");
-    ft_free(ptr);  // This should be handled safely
+    free(ptr);  // This should be handled safely
     ft_printf("Double free completed (should be safe)\n");
     show_alloc_mem();
 }
@@ -280,9 +280,9 @@ void test_null_free()
 {
     print_test_header("TEST 10: Free NULL Pointer");
     
-    ft_printf("Calling ft_free(NULL)...\n");
-    ft_free(NULL);  // Should handle gracefully
-    ft_printf("ft_free(NULL) completed successfully\n");
+    ft_printf("Calling free(NULL)...\n");
+    free(NULL);  // Should handle gracefully
+    ft_printf("free(NULL) completed successfully\n");
 }
 
 int main(void)
