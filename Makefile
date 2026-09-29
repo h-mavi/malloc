@@ -2,7 +2,7 @@ ifeq ($(HOSTTYPE),)
 HOSTTYPE := $(shell uname -m)_$(shell uname -s)
 endif
 
-NAME = libmalloc_$(HOSTTYPE).so
+NAME = libft_malloc_$(HOSTTYPE).so
 SOURCES = malloc.c utils.c check.c find.c
 # main.c
 
@@ -30,7 +30,7 @@ $(NAME) : $(OBJECTS) $(LIBFT)
 	cp $(LIBFT) $(NAME)
 	cp $(PRINTF) $(NAME)
 	ar -rcs $(NAME) $(OBJECTS)
-	ln -s $(NAME) libmalloc.so
+	ln -s $(NAME) libft_malloc.so
 
 test : $(OBJECTS) $(LIBFT)
 	$(CC) $(OBJECTS) $(LIBFT) $(PRINTF) $(CFLAGS) -o test
@@ -42,7 +42,7 @@ clean:
 fclean: clean
 	@rm -f $(NAME)
 	@rm -f test
-	@rm -f libmalloc.so
+	@rm -f libft_malloc.so
 	$(MAKE) fclean -C $(LIBFT_DIR)
 
 re : fclean all
