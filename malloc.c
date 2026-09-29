@@ -41,8 +41,11 @@ void	*realloc(void *ptr, size_t size)
 	if (ptr && !size)	{ free(ptr); return (NULL); }
 	if (!chunk)			{ return (NULL); }
 
-	if (size + sizeof(struct blockdata) == chunk->size) { return ((void *)chunk->mem); }
-	else if (!chunk->next || size + sizeof(struct blockdata) < chunk->size)
+	if (size + sizeof(struct blockdata) == chunk->size)
+		return ((void *)chunk->mem);
+	else if (size + sizeof(struct blockdata) < chunk->size)
+		return ((void *)SplitBlock(chunk, size)->mem);
+	else if (!chunk->next && size + sizeof(struct blockdata) > chunk->size)
 		chunk->size = size + sizeof(struct blockdata);
 
 	if (chunk->next && chunk->mem + size > (void *)chunk->next)
