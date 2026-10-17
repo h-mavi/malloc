@@ -53,8 +53,8 @@ make        # builds libft, ft_printf, and the shared library
 
 This produces:
 
-- `libmalloc_<arch>_<os>.so` (e.g. `libmalloc_x86_64_Linux.so`), the actual shared library
-- `libmalloc.so`, a symlink to it for convenience
+- `libft_malloc_<arch>_<os>.so` (e.g. `libft_malloc_x86_64_Linux.so`), the actual shared library
+- `libft_malloc.so`, a symlink to it for convenience
 
 Other Makefile targets:
 
@@ -74,7 +74,7 @@ Once built, preload the library so any dynamically-linked program uses this allo
 
 ```
 
-LD_PRELOAD=$(pwd)/libmalloc.so your_program
+LD_PRELOAD=$(pwd)/libft_malloc.so your_program
 
 ```-->
 
