@@ -1,5 +1,5 @@
-# ifndef HEAD_H
-# define HEAD_H
+# ifndef MALLOC_H
+# define MALLOC_H
 
 # include "libft/libft.h"
 # include "libft/printf/ft_printf.h"

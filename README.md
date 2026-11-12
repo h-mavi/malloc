@@ -18,7 +18,7 @@ Memory is managed in three kinds of zones, each obtained directly from the kerne
 - **`free`** marks a block as free, `munmap`s it directly if it belongs to the LARGE category, and triggers coalescing of adjacent free blocks (`CheckForCoalesce`).
 - **`realloc`** grows/shrinks in place when possible, otherwise allocates a new block, copies the data over, and frees the old one.
 - **`show_alloc_mem`** walks every zone and every block, printing each allocated (and, in debug mode, freed) range and a running total — useful for inspecting the allocator's internal state.
-- A destructor (`CheckForTotalFree`) runs at program exit, releases any zone left completely empty, and reports a leak warning (`ERROR LEAKS`) if anything is still allocated.
+- A destructor (`CheckForTotalFree`) runs at program exit, releases any zone left completely empty.
 - The allocator is instrumented with **Valgrind** client requests (`VALGRIND_MALLOCLIKE_BLOCK` / `VALGRIND_FREELIKE_BLOCK`) so that Valgrind can correctly track memory managed outside the standard allocator.
 
 ## Project structure
@@ -26,7 +26,7 @@ Memory is managed in three kinds of zones, each obtained directly from the kerne
 ```
 .
 ├── Makefile
-├── head.h              # structures, macros, function prototypes
+├── malloc.h              # structures, macros, function prototypes
 ├── malloc.c            # malloc / free / realloc / show_alloc_mem
 ├── utils.c             # zone/block creation, splitting, large-block handling
 ├── find.c              # lookup helpers (free block, first zone, block by pointer)
@@ -91,5 +91,5 @@ make test
 
 ## Notes
 
-- Debug logging in `show_alloc_mem()` can be turned off by setting `DEBUG` to `0` in `head.h`.
+- Debug logging in `show_alloc_mem()` can be turned off by setting `DEBUG` to `0` in `malloc.h`.
 - `libft` is vendored as a subdirectory and built automatically as part of `make`; it is not a Git submodule.

@@ -1,4 +1,4 @@
-# include "head.h"
+# include "malloc.h"
 
 void	CheckNext()
 {
@@ -82,6 +82,4 @@ void	CheckForTotalFree()
 			CheckNext();
 		}
 	}
-	if (info.tiny || info.small || info.large) { ft_putstr_fd("\033[1;31mERROR LEAKS\n\033[0m", 2); }
-
 }

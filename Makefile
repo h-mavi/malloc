@@ -3,7 +3,8 @@ ifeq ($(HOSTTYPE),)
 endif
 
 NAME = libft_malloc_$(HOSTTYPE).so
-SOURCES = malloc.c utils.c check.c find.c main.c
+SOURCES = malloc.c utils.c check.c find.c
+#main.c
 
 CC = cc
 CFLAGS = -Wall -Werror -Wextra -g -fPIC
