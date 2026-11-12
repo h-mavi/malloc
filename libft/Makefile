@@ -26,7 +26,7 @@ OBJECTS = $(SOURCES:.c=.o)
 BONUS_OBJ = $(BONUS_SRC:.c=.o)
 
 CC = cc
-CFLAGS = -Wall -Werror -Wextra -g
+CFLAGS = -Wall -Werror -Wextra -g -fPIC
 
 $(NAME) : $(OBJECTS)
 	@echo "Compiling $(NAME)"

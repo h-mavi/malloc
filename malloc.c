@@ -5,11 +5,10 @@ meta info = {NULL, NULL, NULL};
 void	*malloc(size_t size)
 {
 	zone	**zone = NULL;
-	size_t	size_zone;
 
 	if (!size)					{ size = 16; }
-	if (size <= N_TINY)			{ zone = &info.tiny; size_zone = TINY_ZONE; }
-	else if (size <= M_SMALL)	{ zone = &info.small; size_zone = SMALL_ZONE; }
+	if (size <= N_TINY)			{ zone = &info.tiny; }
+	else if (size <= M_SMALL)	{ zone = &info.small; }
 	else { return (AddLargeBlock(size)); }
 
 	if (!(*zone)->lst)
@@ -17,9 +16,7 @@ void	*malloc(size_t size)
 		(*zone)->lst = AddBlock(size, *zone);
 		return ((void *)(*zone)->lst->mem);
 	}
-	else { return (FindFreeBlock(size, *zone)); }
-
-	return (NULL);
+	return (FindFreeBlock(size, *zone));
 }
 
 void	free(void *ptr)

@@ -1,13 +1,12 @@
 ifeq ($(HOSTTYPE),)
-HOSTTYPE := $(shell uname -m)_$(shell uname -s)
+	HOSTTYPE := $(shell uname -m)_$(shell uname -s)
 endif
 
 NAME = libft_malloc_$(HOSTTYPE).so
-SOURCES = malloc.c utils.c check.c find.c
-# main.c
+SOURCES = malloc.c utils.c check.c find.c main.c
 
 CC = cc
-CFLAGS = -Wall -Werror -Wextra -g
+CFLAGS = -Wall -Werror -Wextra -g -fPIC
 
 OBJ_DIR = obj
 OBJECTS = $(patsubst %.c,$(OBJ_DIR)/%.o,$(SOURCES))
@@ -27,9 +26,7 @@ $(LIBFT):
 
 $(NAME) : $(OBJECTS) $(LIBFT)
 	@echo "Compiling $(NAME)"
-	cp $(LIBFT) $(NAME)
-	cp $(PRINTF) $(NAME)
-	ar -rcs $(NAME) $(OBJECTS)
+	$(CC) $(CFLAGS) -shared -o $(NAME) $(OBJECTS) $(LIBFT) $(PRINTF)
 	ln -s $(NAME) libft_malloc.so
 
 test : $(OBJECTS) $(LIBFT)
