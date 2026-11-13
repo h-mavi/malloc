@@ -29,7 +29,6 @@ void	CheckForCoalesce()
 			if (chunk->next && chunk->free == true && chunk->next->free == true)
 			{
 				next = chunk->next;
-				chunk->free = true;
 				chunk->next = next->next;
 				chunk->size += next->size;
 				continue;
@@ -42,8 +41,6 @@ void	CheckForCoalesce()
 
 void	CheckForTotalFree()
 {
-	block	*chunk, *mid, *prev = NULL;
-
 	CheckForCoalesce();
 	if (info.tiny && (!info.tiny->lst || (info.tiny->lst->next == NULL && info.tiny->lst->free)))
 	{
@@ -61,6 +58,8 @@ void	CheckForTotalFree()
 	}
 	if (info.large)
 	{
+		block	*chunk, *mid, *prev = NULL;
+
 		chunk = info.large->lst;
 		while(chunk)
 		{

@@ -45,7 +45,6 @@ block	*AddBlock(size_t size, const zone *zone)
 void	*AddLargeBlock(size_t size)
 {
 	block	*chunk, *ex;
-	void	*ptr;
 	if (!info.large)
 	{
 		info.large = mmap(NULL, sizeof(struct zonedata) + sizeof(struct blockdata) + size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
@@ -60,8 +59,6 @@ void	*AddLargeBlock(size_t size)
 		CheckNext();
 		return ((void *)info.large->lst->mem);
 	}
-	ptr = FindFreeBlock(size, info.large);
-	if (ptr) { return (ptr); }
 
 	chunk = mmap(NULL, sizeof(struct blockdata) + size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
 	if (chunk == MAP_FAILED) { return (NULL); }

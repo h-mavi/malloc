@@ -40,23 +40,18 @@ void	*realloc(void *ptr, size_t size)
 
 	if (size + sizeof(struct blockdata) == chunk->size)
 		return ((void *)chunk->mem);
-	else if (size + sizeof(struct blockdata) < chunk->size)
+	else if (sizeof(struct blockdata) + M_SMALL >= chunk->size && size <= M_SMALL)
 		return ((void *)SplitBlock(chunk, size)->mem);
-	else if (!chunk->next && size + sizeof(struct blockdata) > chunk->size)
-		chunk->size = size + sizeof(struct blockdata);
 
-	if (chunk->next && chunk->mem + size > (void *)chunk->next)
-	{
-		chunk->free = true;
-		CheckForCoalesce();
-		if (size <= N_TINY)			{ new = FindBlock(FindFreeBlock(size, info.tiny)); }
-		else if (size <= M_SMALL)	{ new = FindBlock(FindFreeBlock(size, info.small)); }
-		else						{ new = FindBlock(FindFreeBlock(size, info.large)); }
-		ft_memcpy(new->mem, chunk->mem, chunk->size - sizeof(struct blockdata));
-		return ((void *)new->mem);
-	}
-
-	return ((void *)chunk->mem);
+	if		(size <= N_TINY)	{ new = FindBlock(FindFreeBlock(size, info.tiny)); }
+	else if (size <= M_SMALL)	{ new = FindBlock(FindFreeBlock(size, info.small)); }
+	else						{ new = FindBlock(AddLargeBlock(size)); }
+	ft_memcpy(new->mem, chunk->mem, chunk->size - sizeof(struct blockdata));
+	if (chunk->size > M_SMALL + sizeof(struct blockdata))
+		FreeLargeBlock(chunk);
+	else { chunk->free = true; }
+	CheckForCoalesce();
+	return ((void *)new->mem);
 }
 
 void    show_alloc_mem()
@@ -98,3 +93,15 @@ void    show_alloc_mem()
 	if (DEBUG) { ft_printf("~   %sREAL%s Total : %d bytes\n", B_GREEN, RESET, r_tot); } 
 }
 
+// else if (chunk->size > M_SMALL + sizeof(struct blockdata))
+	// {
+	// 	if (size <= N_TINY)
+	// 		 new = FindBlock(FindFreeBlock(size, info.tiny));
+	// 	else if (size <= N_SMALL)
+	// 		 new = FindBlock(FindFreeBlock(size, info.small));
+	// 	else if (size > M_SMALL)
+	// 		new = FindBlock(AddLargeBlock(size));
+	// 	ft_memcpy(new->mem, chunk->mem, size);
+	// 	FreeLargeBlock(chunk);
+	// 	return ((void *)new->mem);
+	// }

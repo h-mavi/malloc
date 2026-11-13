@@ -44,14 +44,14 @@ typedef struct zonedata
 	void	*beg;
 	block	*lst;
 	struct zonedata	*next;
-}   zone;
+}	__attribute__((aligned(16)))   zone;
 
 typedef struct metadata
 {
 	zone	*tiny;
 	zone	*small;
 	zone	*large;
-}   meta;
+}	__attribute__((aligned(16)))   meta;
 
 extern meta info;
 

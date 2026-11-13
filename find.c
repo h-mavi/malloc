@@ -4,7 +4,8 @@ void	*FindFreeBlock(size_t size, zone *zone)
 {
 	block	*pres = zone->lst;
 
-	while (pres)
+	if (zone == info.large) { return (NULL); }
+	while (pres && pres->next)
 	{
 		if (pres->size == size + sizeof(struct blockdata) && pres->free)
 		{
@@ -15,12 +16,9 @@ void	*FindFreeBlock(size_t size, zone *zone)
 			pres->size - size - sizeof(struct blockdata) > sizeof(struct blockdata))
 			return ((void *)SplitBlock(pres, size)->mem);
 
-		if (pres->next == NULL) { break; }
 		pres = pres->next;
 	}
-	if (zone == info.large) { return (NULL); }
-	pres->next = AddBlock(size, zone);
-	return ((void *)pres->next->mem);
+	return ((void *)AddBlock(size, zone)->mem);
 }
 
 zone	*FindFirstZone()
