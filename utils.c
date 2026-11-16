@@ -21,8 +21,7 @@ void	InitializeZone()
 
 block	*AddBlock(size_t size, const zone *zone)
 {
-	block	*ex;
-	block	*chunk;
+	block	*ex, *chunk;
 
 	if (zone->lst)
 	{
@@ -48,20 +47,19 @@ void	*AddLargeBlock(size_t size)
 	if (!info.large)
 	{
 		info.large = mmap(NULL, sizeof(struct zonedata) + sizeof(struct blockdata) + size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
-		if (info.large == MAP_FAILED) { return (NULL); }
+		if (info.large == MAP_FAILED) { ft_putstr_fd("\033[1;31mERROR ALLOCATION FAILED\n\033[0m", 2); return (NULL); }
 		VALGRIND_MALLOCLIKE_BLOCK(info.large, sizeof(struct zonedata) + sizeof(struct blockdata) + size, 0, 0);
 
-		info.large->lst = NULL;
 		info.large->next = NULL;
 		info.large->beg = (void *)info.large + sizeof(struct zonedata);
+		info.large->lst = info.large->beg;
 		info.large->size = sizeof(struct zonedata) + sizeof(struct blockdata) + size;
-		info.large->lst = AddBlock(size, info.large);
 		CheckNext();
 		return ((void *)info.large->lst->mem);
 	}
 
 	chunk = mmap(NULL, sizeof(struct blockdata) + size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
-	if (chunk == MAP_FAILED) { return (NULL); }
+	if (chunk == MAP_FAILED) {  ft_putstr_fd("\033[1;31mERROR ALLOCATION FAILED\n\033[0m", 2); return (NULL); }
 	VALGRIND_MALLOCLIKE_BLOCK(chunk, sizeof(struct blockdata) + size, 0, 0);
 
 	chunk->next = NULL;
@@ -72,6 +70,7 @@ void	*AddLargeBlock(size_t size)
 	while (ex->next)
 		ex = ex->next;
 	ex->next = chunk;
+	info.large->size += chunk->size;
 	return ((void *)chunk->mem);
 }
 
@@ -102,6 +101,7 @@ void	FreeLargeBlock(block *chunk)
 		prev = prev->next;
 	}
 	prev->next = chunk->next;
+	info.large->size -= chunk->size;
 	munmap((void *)chunk, chunk->size);
 	VALGRIND_FREELIKE_BLOCK(chunk, 0);
 }

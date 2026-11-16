@@ -23,12 +23,14 @@
 # define B_GREEN "\033[1;32m"
 # define B_YELLOW "\033[1;33m"
 
-# define DEBUG 1
+# define DEBUG 0
 # define PAGE_SIZE sysconf(_SC_PAGESIZE)
 # define N_TINY (size_t)(PAGE_SIZE * 16)	// max TINY-block size = 16KB
 # define M_SMALL (size_t)(PAGE_SIZE * 256)	// max SMALL-block size = 1MB
 # define TINY_ZONE (size_t)((N_TINY + sizeof(struct blockdata)) * 100)   // TINY-zone size = 6400KB
 # define SMALL_ZONE (size_t)((M_SMALL + sizeof(struct blockdata)) * 100) // SMALL-zone size = 100MB
+
+# define ALIGN16(x) (((x) + 15) & ~(size_t)15)
 
 typedef struct blockdata
 {

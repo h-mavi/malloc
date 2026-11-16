@@ -4,14 +4,14 @@ void	CheckNext()
 {
 	if (info.tiny)
 	{
-		if (info.small)				{ info.tiny->next = info.small; }
-		else if (info.large)		{ info.tiny->next = info.large; }
-		else						{ info.tiny->next = NULL; }
+		if (info.small)			{ info.tiny->next = info.small; }
+		else if (info.large)	{ info.tiny->next = info.large; }
+		else					{ info.tiny->next = NULL; }
 	}
 	if (info.small)
 	{
-		if (info.large)				{ info.small->next = info.large; }
-		else						{ info.small->next = NULL; }
+		if (info.large)			{ info.small->next = info.large; }
+		else					{ info.small->next = NULL; }
 	}
 	if (info.large && info.large->next) { info.large->next = NULL; }
 }
@@ -81,4 +81,5 @@ void	CheckForTotalFree()
 			CheckNext();
 		}
 	}
+	if (DEBUG && (info.tiny || info.small || info.large)) { ft_putstr_fd("\033[1;31mERROR LEAKS\n\033[0m", 2); }
 }

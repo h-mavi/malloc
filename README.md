@@ -20,13 +20,14 @@ Memory is managed in three kinds of zones, each obtained directly from the kerne
 - **`show_alloc_mem`** walks every zone and every block, printing each allocated (and, in debug mode, freed) range and a running total — useful for inspecting the allocator's internal state.
 - A destructor (`CheckForTotalFree`) runs at program exit, releases any zone left completely empty.
 - The allocator is instrumented with **Valgrind** client requests (`VALGRIND_MALLOCLIKE_BLOCK` / `VALGRIND_FREELIKE_BLOCK`) so that Valgrind can correctly track memory managed outside the standard allocator.
+- Every memory allocation is aligned to 16 bytes, as also all the structures.
 
 ## Project structure
 
 ```
 .
 ├── Makefile
-├── malloc.h              # structures, macros, function prototypes
+├── malloc.h            # structures, macros, function prototypes
 ├── malloc.c            # malloc / free / realloc / show_alloc_mem
 ├── utils.c             # zone/block creation, splitting, large-block handling
 ├── find.c              # lookup helpers (free block, first zone, block by pointer)
@@ -68,7 +69,7 @@ Other Makefile targets:
 
 ## Usage
 
-<!-- ### Override the system allocator
+### Override the system allocator
 
 Once built, preload the library so any dynamically-linked program uses this allocator instead of the system's:
 
@@ -76,7 +77,7 @@ Once built, preload the library so any dynamically-linked program uses this allo
 
 LD_PRELOAD=$(pwd)/libft_malloc.so your_program
 
-```-->
+```
 
 ### Run the built-in test suite
 
