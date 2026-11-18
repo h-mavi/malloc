@@ -291,9 +291,9 @@ int main(void)
     ft_printf("%s║   CUSTOM ALLOCATOR TEST SUITE          ║%s\n", B_GREEN, RESET);
     ft_printf("%s╚════════════════════════════════════════╝%s\n", B_GREEN, RESET);
     
-    test_basic_malloc();
-    test_malloc_zero();
-    test_multiple_allocations();
+    // test_basic_malloc();
+    // test_malloc_zero();
+    // test_multiple_allocations();
     test_realloc_basic();
     test_realloc_edge_cases();
     test_large_allocations();

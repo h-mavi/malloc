@@ -7,12 +7,16 @@ void	*FindFreeBlock(size_t size, zone *zone)
 	if (zone == info.large) { return (NULL); }
 	while (pres)
 	{
-		if (pres->size >= size + sizeof(struct blockdata) && pres->free)
+		if (pres->size >= size + sizeof(struct blockdata) && pres->free) // pres->size = 64,size = 32
 		{
+			ft_printf("%d - (%d + %d) = %d >= %d + 16", pres->size, size, sizeof(struct blockdata), pres->size - (size + sizeof(struct blockdata)), sizeof(struct blockdata));
 			if (pres->size - (size + sizeof(struct blockdata)) >= sizeof(struct blockdata) + 16)
 				return ((void *)SplitBlock(pres, size)->mem);
-			pres->free = false;
-			return ((void *)pres->mem);
+			else if (pres->size - sizeof(struct blockdata) == size) //entra qui ma non va bene? forse è sbagliato l'arrotondamento a mult. di 16
+			{
+				pres->free = false;
+				return ((void *)pres->mem);
+			}
 		}
 		pres = pres->next;
 	}

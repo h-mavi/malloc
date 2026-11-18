@@ -2,7 +2,7 @@
 
 meta info = {NULL, NULL, NULL};
 
-void	*malloc(size_t req)
+void	*ft_malloc(size_t req)
 {
 	zone	**zone = NULL;
 
@@ -10,9 +10,9 @@ void	*malloc(size_t req)
 	if (req > SIZE_MAX - 15)	{ return NULL; }
 	size_t	size = ALIGN16(req);
 
-	if (size <= N_TINY)			{ zone = &info.tiny; }
-	else if (size <= M_SMALL)	{ zone = &info.small; }
-	else { return (AddLargeBlock(size)); }
+	if (size <= N_TINY)			{ ft_printf("Tiny!!!!!\n"); zone = &info.tiny; }
+	else if (size <= M_SMALL)	{ ft_printf("Small!!!!\n"); zone = &info.small; }
+	else { ft_printf("Large!!!!\n"); return (AddLargeBlock(size)); }
 
 	if (!(*zone)->lst)
 	{
@@ -22,7 +22,7 @@ void	*malloc(size_t req)
 	return (FindFreeBlock(size, *zone));
 }
 
-void	free(void *ptr)
+void	ft_free(void *ptr)
 {
 	block	*chunk = FindBlock(ptr);
 
@@ -33,28 +33,34 @@ void	free(void *ptr)
 	CheckForCoalesce();
 }
 
-void	*realloc(void *ptr, size_t req)
+void	*ft_realloc(void *ptr, size_t req)
 {
 	block	*new = NULL, *chunk = FindBlock(ptr);
 
-	if (!ptr)			{ return (malloc(req)); }
-	if (ptr && !req)	{ free(ptr); }
+	if (!ptr)			{ return (ft_malloc(req)); }
+	if (ptr && !req)	{ ft_free(ptr); }
 	if (!req || !chunk || req > SIZE_MAX - 15)	{ return (NULL); }
 	size_t	size = ALIGN16(req);
 
 	if (size + sizeof(struct blockdata) == chunk->size)
 		return ((void *)chunk->mem);
 
-	if		(size <= N_TINY)	{ new = FindBlock(FindFreeBlock(size, info.tiny)); }
-	else if (size <= M_SMALL)	{ new = FindBlock(FindFreeBlock(size, info.small)); }
-	else						{ new = FindBlock(AddLargeBlock(size)); }
+	ft_printf("\n\nchunk->size = %d  > %d ??\n\n", chunk->size, M_SMALL + sizeof(struct blockdata));
+
+	if		(size <= N_TINY)	{ ft_printf("New Tiny!!!!\n"); new = FindBlock(FindFreeBlock(size, info.tiny)); }
+	else if (size <= M_SMALL)	{ ft_printf("New Small!!!!\n"); new = FindBlock(FindFreeBlock(size, info.small)); }
+	else						{ ft_printf("New Large!!!!\n"); new = FindBlock(AddLargeBlock(size)); }
 
 	if (!new)	{ return (NULL); }
 	ft_memcpy(new->mem, chunk->mem, chunk->size - sizeof(struct blockdata));
 
 	chunk->free = true;
+	ft_printf("\n\nchunk->size = %d  > %d ??\n\n", chunk->size, M_SMALL + sizeof(struct blockdata));
 	if (chunk->size > M_SMALL + sizeof(struct blockdata))
+	{
+		ft_printf("Old Large!!!!\n");
 		FreeLargeBlock(chunk);
+	}
 
 	CheckForCoalesce();
 	return ((void *)new->mem);
