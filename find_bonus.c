@@ -11,8 +11,11 @@ void	*FindFreeBlock(size_t size, zone *zone)
 		{
 			if (pres->size - (size + sizeof(struct blockdata)) >= sizeof(struct blockdata) + 16)
 				return ((void *)SplitBlock(pres, size)->mem);
-			pres->free = false;
-			return ((void *)pres->mem);
+			else if (pres->size - sizeof(struct blockdata) == size)
+			{
+				pres->free = false;
+				return ((void *)pres->mem);
+			}
 		}
 		pres = pres->next;
 	}
