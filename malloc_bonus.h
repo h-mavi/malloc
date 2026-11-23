@@ -24,7 +24,7 @@
 # define B_GREEN "\033[1;32m"
 # define B_YELLOW "\033[1;33m"
 
-# define DEBUG 0
+# define DEBUG 1
 # define PAGE_SIZE sysconf(_SC_PAGESIZE)
 # define N_TINY (size_t)(PAGE_SIZE * 16)	// max TINY-block size = 16KB
 # define M_SMALL (size_t)(PAGE_SIZE * 256)	// max SMALL-block size = 1MB
@@ -33,11 +33,18 @@
 
 # define ALIGN16(x) (((x) + 15) & ~(size_t)15)
 
+typedef enum {
+	TINY = 0,
+	SMALL,
+	LARGE
+} flag;
+
 typedef struct blockdata
 {
 	size_t	size;
 	bool	free;
 	void	*mem;
+	flag	f_zone;	
 	struct blockdata	*next;
 }   __attribute__((aligned(16)))    block;
 
@@ -46,7 +53,7 @@ typedef struct zonedata
 	size_t	size;
 	void	*beg;
 	block	*lst;
-	// struct zonedata	*next;
+	pthread_mutex_t	mutex_z;
 }	__attribute__((aligned(16)))   zone;
 
 typedef struct metadata
@@ -54,28 +61,34 @@ typedef struct metadata
 	zone	*tiny;
 	zone	*small;
 	zone	*large;
+	pthread_mutex_t	mutex_i;
 }	__attribute__((aligned(16)))   meta;
 
 extern meta info;
 
 // in check_bonus.c
+
 void	CheckNext();
 void	CheckForCoalesce();
 void	__attribute__((destructor)) CheckForTotalFree();
 
 // in find_bonus.c
+
 void	*FindFreeBlock(size_t size, zone *zone);
 zone	*FindFirstZone();
 zone	*FindNextZone(const zone *zone);
 block	*FindBlock(void *ptr);
+zone	*FindBlockZone(void *ptr);
 
 // in malloc_bonus.c
+
 void	*malloc(size_t size);
 void	free(void *ptr);
 void	*realloc(void *ptr, size_t size);
 void	show_alloc_mem();
 
 // in utils_bonus.c
+
 void	__attribute__((constructor)) InitializeZone();
 block	*AddBlock(size_t size, const zone *zone);
 void	*AddLargeBlock(size_t size);
