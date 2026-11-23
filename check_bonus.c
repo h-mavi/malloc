@@ -56,30 +56,12 @@ void	CheckForTotalFree()
 		info.small = NULL;
 		// CheckNext();
 	}
-	if (info.large)
+	if (info.large && info.large->lst->next == NULL && info.large->lst->free)
 	{
-		block	*chunk, *mid, *prev = NULL;
-
-		chunk = info.large->lst;
-		while(chunk)
-		{
-			mid = chunk;
-			chunk = chunk->next;
-			if (mid->free && mid != info.large->lst)
-			{
-				munmap((void *)mid, mid->size);
-				VALGRIND_FREELIKE_BLOCK(mid, 0);
-				if (prev) { prev->next = chunk; continue; }
-			}
-			prev = mid;
-		}
-		if (info.large->lst->free && info.large->lst->next == NULL)
-		{
-			munmap((void *)info.large, info.large->size);
-			VALGRIND_FREELIKE_BLOCK(info.large, 0);
-			info.large = NULL;
-			// CheckNext();
-		}
+		munmap((void *)info.large, info.large->size);
+		VALGRIND_FREELIKE_BLOCK(info.large, 0);
+		info.large = NULL;
+		// CheckNext();
 	}
 	if (DEBUG && (info.tiny || info.small || info.large)) { ft_putstr_fd("\033[1;31mERROR LEAKS\n\033[0m", 2); }
 }
