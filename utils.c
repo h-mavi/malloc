@@ -50,10 +50,16 @@ void	*AddLargeBlock(size_t size)
 		if (info.large == MAP_FAILED) { ft_putstr_fd("\033[1;31mERROR ALLOCATION FAILED\n\033[0m", 2); return (NULL); }
 		VALGRIND_MALLOCLIKE_BLOCK(info.large, sizeof(struct zonedata) + sizeof(struct blockdata) + size, 0, 0);
 
-		info.large->next = NULL;
 		info.large->beg = (void *)info.large + sizeof(struct zonedata);
-		info.large->lst = info.large->beg;
 		info.large->size = sizeof(struct zonedata) + sizeof(struct blockdata) + size;
+		info.large->lst = info.large->beg;
+		info.large->next = NULL;
+
+		info.large->lst->mem = info.large->lst + sizeof(struct blockdata);
+		info.large->lst->size = size + sizeof(struct blockdata);
+		info.large->lst->free = false;
+		info.large->lst->next = NULL;
+
 		CheckNext();
 		return ((void *)info.large->lst->mem);
 	}

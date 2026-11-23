@@ -143,7 +143,7 @@ void test_large_allocations()
     size_t large_size1 = M_SMALL + 1024;     // Larger than SMALL zone
     size_t large_size2 = M_SMALL + 8192;
     
-    ft_printf("Allocating %zu bytes (LARGE zone)\n", large_size1);
+    ft_printf("Allocating %d bytes (LARGE zone)\n", large_size1);
     char *large1 = ft_malloc(large_size1);
     if (!large1) {
         ft_printf("Large allocation 1 failed\n");
@@ -158,7 +158,7 @@ void test_large_allocations()
     large1[5] = '1';
     large1[6] = '\0';
     
-    ft_printf("Allocating %zu bytes (LARGE zone)\n", large_size2);
+    ft_printf("Allocating %d bytes (LARGE zone)\n", large_size2);
     char *large2 = ft_malloc(large_size2);
     if (!large2) {
         ft_printf("Large allocation 2 failed\n");
@@ -192,19 +192,19 @@ void test_tiny_small_large()
     
     // TINY allocation
     size_t tiny_size = 100;
-    ft_printf("TINY allocation (%zu bytes):\n", tiny_size);
+    ft_printf("TINY allocation (%d bytes):\n", tiny_size);
     char *tiny = ft_malloc(tiny_size);
     if (tiny) ft_strlcpy(tiny, "TINY", tiny_size);
     
     // SMALL allocation
     size_t small_size = N_TINY + 1024;
-    ft_printf("SMALL allocation (%zu bytes):\n", small_size);
+    ft_printf("SMALL allocation (%d bytes):\n", small_size);
     char *small = ft_malloc(small_size);
     if (small) small[0] = 'S';
     
     // LARGE allocation
     size_t large_size = M_SMALL + 512;
-    ft_printf("LARGE allocation (%zu bytes):\n", large_size);
+    ft_printf("LARGE allocation (%d bytes):\n", large_size);
     char *large = ft_malloc(large_size);
     if (large) large[0] = 'L';
     
@@ -291,9 +291,9 @@ int main(void)
     ft_printf("%s║   CUSTOM ALLOCATOR TEST SUITE          ║%s\n", B_GREEN, RESET);
     ft_printf("%s╚════════════════════════════════════════╝%s\n", B_GREEN, RESET);
     
-    // test_basic_malloc();
-    // test_malloc_zero();
-    // test_multiple_allocations();
+    test_basic_malloc();
+    test_malloc_zero();
+    test_multiple_allocations();
     test_realloc_basic();
     test_realloc_edge_cases();
     test_large_allocations();
