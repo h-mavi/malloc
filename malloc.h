@@ -23,7 +23,7 @@
 # define B_GREEN "\033[1;32m"
 # define B_YELLOW "\033[1;33m"
 
-# define DEBUG 1
+# define DEBUG 0
 # define PAGE_SIZE sysconf(_SC_PAGESIZE)
 # define N_TINY (size_t)(PAGE_SIZE * 16)	// max TINY-block size = 16KB
 # define M_SMALL (size_t)(PAGE_SIZE * 256)	// max SMALL-block size = 1MB
@@ -68,9 +68,9 @@ zone	*FindFirstZone();
 block	*FindBlock(void *ptr);
 
 // in malloc.c
-void	*ft_malloc(size_t size);
-void	ft_free(void *ptr);
-void	*ft_realloc(void *ptr, size_t size);
+void	*malloc(size_t size);
+void	free(void *ptr);
+void	*realloc(void *ptr, size_t size);
 void	show_alloc_mem();
 
 // in utils.c

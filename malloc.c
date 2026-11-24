@@ -2,7 +2,7 @@
 
 meta info = {NULL, NULL, NULL};
 
-void	*ft_malloc(size_t req)
+void	*malloc(size_t req)
 {
 	zone	**zone = NULL;
 
@@ -22,7 +22,7 @@ void	*ft_malloc(size_t req)
 	return (FindFreeBlock(size, *zone));
 }
 
-void	ft_free(void *ptr)
+void	free(void *ptr)
 {
 	block	*chunk = FindBlock(ptr);
 
@@ -33,12 +33,12 @@ void	ft_free(void *ptr)
 	CheckForCoalesce();
 }
 
-void	*ft_realloc(void *ptr, size_t req)
+void	*realloc(void *ptr, size_t req)
 {
 	block	*new = NULL, *chunk = FindBlock(ptr);
 
-	if (!ptr)			{ return (ft_malloc(req)); }
-	if (ptr && !req)	{ ft_free(ptr); }
+	if (!ptr)			{ return (malloc(req)); }
+	if (ptr && !req)	{ free(ptr); }
 	if (!req || !chunk || req > SIZE_MAX - 15)	{ return (NULL); }
 	size_t	size = ALIGN16(req);
 
@@ -50,7 +50,7 @@ void	*ft_realloc(void *ptr, size_t req)
 	else						{ new = FindBlock(AddLargeBlock(size)); }
 
 	if (!new)	{ return (NULL); }
-	ft_memcpy(new->mem, chunk->mem, size);
+	ft_memcpy(new->mem, chunk->mem, chunk->size < size ? chunk->size : size);
 
 	chunk->free = true;
 	if (chunk->size > M_SMALL + sizeof(struct blockdata))
