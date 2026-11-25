@@ -73,7 +73,7 @@ void	*ft_realloc(void *ptr, size_t req)
 	}
 	new_z = FindBlockZone(new);
 	// if (new->f_zone != chunk->f_zone)	pthread_mutex_lock(&new_z->mutex_z);
-	ft_memcpy(new->mem, chunk->mem, size);
+	ft_memcpy(new->mem, chunk->mem, chunk->size < size ? chunk->size : size);
 	// if (new->f_zone != chunk->f_zone)	pthread_mutex_unlock(&new_z->mutex_z);
 
 	chunk->free = true;

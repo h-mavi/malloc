@@ -50,7 +50,7 @@ void	*ft_realloc(void *ptr, size_t req)
 	else						{ new = FindBlock(AddLargeBlock(size)); }
 
 	if (!new)	{ return (NULL); }
-	ft_memcpy(new->mem, chunk->mem, size);
+	ft_memcpy(new->mem, chunk->mem, chunk->size < size ? chunk->size : size);
 
 	chunk->free = true;
 	if (chunk->size > M_SMALL + sizeof(struct blockdata))
